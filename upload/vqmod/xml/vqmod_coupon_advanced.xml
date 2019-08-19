@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<modification>
+    <id>VQMOD Add on for coupons</id>
+    <version>1.4.x and above</version>
+    <vqmver required="true">2.6.0</vqmver>
+    <author>akmjoe</author>
+
+    <file name="catalog/model/extension/total/coupon.php" error="log">
+        <operation error="log" info="Disable default coupon methods">
+            <search position="after"><![CDATA[public function getCoupon($code) {]]></search>
+            <add><![CDATA[if($this->config->get('module_coupon_advanced_status')) return;]]></add>
+        </operation>
+        <operation error="log" info="Disable default coupon methods">
+            <search position="after"><![CDATA[public function getTotal($total) {]]></search>
+            <add><![CDATA[if($this->config->get('module_coupon_advanced_status')) return;]]></add>
+        </operation>
+    </file>
+    <file name="admin/view/template/marketing/coupon_form.twig" error="log">
+        <operation error="log" info="To set product resriction to use model in autocomplete">
+            <search position="replace"><![CDATA[url: 'index.php?route=catalog/product/autocomplete&user_token={{ user_token }}&filter_name=' +  encodeURIComponent(request),]]></search>
+            <add><![CDATA[url: 'index.php?route=catalog/product/autocomplete&user_token={{ user_token }}&filter_model=' +  encodeURIComponent(request),]]></add>
+        </operation>
+    </file>
+    <file name="admin/controller/marketing/coupon.php" error="log">
+        <operation error="log" info="To set product to show model with name">
+            <search position="replace"><![CDATA['name'       => $product_info['name']]]></search>
+            <add><![CDATA['name'       => $product_info['model'].' '.$product_info['name']]]></add>
+        </operation>
+    </file>
+
+</modification>

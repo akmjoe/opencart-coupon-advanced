@@ -1,0 +1,97 @@
+<div class="tab-pane" id="tab-restriction">
+    <div class="form-group">
+        <label class="col-sm-2 control-label">
+            <span data-toggle="tooltip" title="{{ help_customer_group }}">{{ text_customer_group }}</span>
+	</label>
+	<div class="col-sm-10">
+            <select name="customer_group_id" class="form-control">
+		<option value="0" {% if customer_group_id == 0 %}selected="selected"{% endif %}>{{ text_all }}</option>
+		{% for group in customer_groups %}
+                    <option value="{{ group.customer_group_id }}" {% if group.customer_group_id == customer_group_id %}selected="selected"{% endif %}>
+			{{ group.name }}
+                    </option>
+		{% endfor %}
+            </select>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-sm-2 control-label" for="input-product-exclude"><span data-toggle="tooltip" title="{{ help_product }}">{{ entry_product }}</span></label>
+        <div class="col-sm-10">
+          <input type="text" name="product-exclude" value="" placeholder="{{ entry_product }}" id="input-product-exclude" class="form-control" />
+          <div id="coupon-product-exclude" class="well well-sm" style="height: 150px; overflow: auto;"> {% for coupon_product in coupon_product_exclude %}
+            <div id="coupon-product-exclude{{ coupon_product.product_id }}"><i class="fa fa-minus-circle"></i> {{ coupon_product.name }}
+              <input type="hidden" name="coupon_product_exclude[]" value="{{ coupon_product.product_id }}" />
+            </div>
+            {% endfor %} </div>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-sm-2 control-label" for="input-category-exclude"><span data-toggle="tooltip" title="{{ help_category }}">{{ entry_category }}</span></label>
+        <div class="col-sm-10">
+          <input type="text" name="category-exclude" value="" placeholder="{{ entry_category }}" id="input-category-exclude" class="form-control" />
+          <div id="coupon-category-exclude" class="well well-sm" style="height: 150px; overflow: auto;"> {% for coupon_category in coupon_category_exclude %}
+            <div id="coupon-category-exclude{{ coupon_category.category_id }}"><i class="fa fa-minus-circle"></i> {{ coupon_category.name }}
+              <input type="hidden" name="coupon_category_exclude[]" value="{{ coupon_category.category_id }}" />
+            </div>
+            {% endfor %} </div>
+        </div>
+    </div>
+</div>
+        <script type="text/javascript"><!--
+$('input[name=\'product-exclude\']').autocomplete({
+	'source': function(request, response) {
+		$.ajax({
+			url: 'index.php?route=catalog/product/autocomplete&user_token={{ user_token }}&filter_model=' +  encodeURIComponent(request),
+			dataType: 'json',			
+			success: function(json) {
+				response($.map(json, function(item) {
+					return {
+						label: item['name'],
+						value: item['product_id']
+					}
+				}));
+			}
+		});
+	},
+	'select': function(item) {
+		$('input[name=\'product-exclude\']').val('');
+		
+		$('#coupon-product-exclude' + item['value']).remove();
+		
+		$('#coupon-product-exclude').append('<div id="coupon-product-exclude' + item['value'] + '"><i class="fa fa-minus-circle"></i> ' + item['label'] + '<input type="hidden" name="coupon_product_exclude[]" value="' + item['value'] + '" /></div>');	
+	}
+});
+
+$('#coupon-product-exclude').delegate('.fa-minus-circle', 'click', function() {
+	$(this).parent().remove();
+});
+
+// Category
+$('input[name=\'category-exclude\']').autocomplete({
+	'source': function(request, response) {
+		$.ajax({
+			url: 'index.php?route=catalog/category/autocomplete&user_token={{ user_token }}&filter_name=' +  encodeURIComponent(request),
+			dataType: 'json',
+			success: function(json) {
+				response($.map(json, function(item) {
+					return {
+						label: item['name'],
+						value: item['category_id']
+					}
+				}));
+			}
+		});
+	},
+	'select': function(item) {
+		$('input[name=\'category-exclude\']').val('');
+		
+		$('#coupon-category-exclude' + item['value']).remove();
+		
+		$('#coupon-category-exclude').append('<div id="coupon-category-exclude' + item['value'] + '"><i class="fa fa-minus-circle"></i> ' + item['label'] + '<input type="hidden" name="coupon_category_exclude[]" value="' + item['value'] + '" /></div>');
+	}	
+});
+
+$('#coupon-category-exclude').delegate('.fa-minus-circle', 'click', function() {
+	$(this).parent().remove();
+});
+//--></script> 
