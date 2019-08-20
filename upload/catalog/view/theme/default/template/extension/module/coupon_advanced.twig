@@ -1,0 +1,62 @@
+
+<label class="control-label" for="input-coupon"><strong>{{ heading_coupon }}</strong></label>
+<div class="input-group col-sm-4">
+  <input type="text" name="coupon" value="{{ coupon }}" placeholder="{{ entry_coupon }}" id="input-coupon" class="form-control" />
+  <span class="input-group-btn">
+  <input type="button" value="{{ button_coupon }}" id="button-coupon" data-loading-text="{{ text_loading }}"  class="btn btn-primary" />
+  </span>
+</div>
+{% if message_coupon %}
+  <div class="alert alert-success alert-dismissible">
+    <i class="fa fa-exclamation-circle"></i>
+    {{ message_coupon }}
+    <button type="button" class="close" data-dismiss="alert">&times;</button>
+</div>  
+{% endif %}
+{% if error %}
+<div class="alert alert-danger alert-dismissible">
+    <i class="fa fa-exclamation-circle"></i>
+    {{ error }}
+    <button type="button" class="close" data-dismiss="alert">&times;</button>
+</div>
+{% endif %}
+<hr>
+<script type="text/javascript"><!--
+$('#button-coupon').on('click', function() {
+	$.ajax({
+		url: 'index.php?route=extension/module/coupon_advanced/coupon',
+		type: 'post',
+		data: 'coupon=' + encodeURIComponent($('input[name=\'coupon\']').val()),
+		dataType: 'json',
+		beforeSend: function() {
+			$('#button-coupon').button('loading');
+                        $('#button-payment-method').button('loading');
+		},
+		complete: function() {
+			$('#button-coupon').button('reset');
+                        $('#button-payment-method').button('reset');
+		},
+		success: function(json) {
+			$('.alert-dismissible').remove();
+
+			if (json['error']) {
+				$('#collapse-payment-method .panel-body').prepend('<div class="alert alert-danger alert-dismissible"><i class="fa fa-exclamation-circle"></i> ' + json['error'] + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+
+			}
+                        
+                        if (json['message']) {
+				$('#collapse-payment-method .panel-body').prepend('<div class="alert alert-success alert-dismissible"><i class="fa fa-exclamation-circle"></i> ' + json['message'] + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+
+			}
+
+			if (json['redirect']) {
+				location = json['redirect'];
+			}
+		},
+		error: function(xhr, ajaxOptions, thrownError) {
+			alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+		}
+	});
+});
+//--></script>
+

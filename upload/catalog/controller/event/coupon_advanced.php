@@ -39,5 +39,29 @@ class ControllerEventCouponAdvanced extends Controller {
 			unset($this->session->data['pre_order_status_id']);
 		}
 	}
+	
+	public function payment(&$route, &$data, &$output) {
+        // check if this module is enabled
+        if(!$this->config->get('module_coupon_advanced_status')) {
+            return;
+        }
+		$data = array_merge($data, $this->load->language('extension/module/coupon_advanced'));
+		if (isset($this->session->data['coupon'])) {
+			$data['coupon'] = $this->session->data['coupon'];
+		} else {
+			$data['coupon'] = '';
+			// check if a customer coupon, and apply it
+			$this->load->model('extension/module/coupon_advanced');
+			if($this->model_extension_module_coupon_advanced->customerCoupon($message = new stdClass())) {
+				$data['message_coupon'] = $message->success;
+				if(isset($message->warning)) $data['error'] = $message->warning;
+				$data['coupon'] = $this->session->data['coupon'];
+			}
+		}
+		
+		// add coupon page
+		$insert = $this->load->view('extension/module/coupon_advanced', $data);
+		$output = $insert.$output;
+    }
     
 }

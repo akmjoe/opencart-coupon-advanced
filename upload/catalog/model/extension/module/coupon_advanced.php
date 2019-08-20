@@ -1,26 +1,36 @@
 <?php
 class ModelExtensionModuleCouponAdvanced extends Model {
-	public function getCoupon($code) {
+	public function getCoupon($code, $message = null) {// $message will be set to the reason this coupon cannot be used
+		if($message === null) $message = new stdClass ();
 		$status = true;
+		$this->language->load('extension/module/coupon_advanced');
 
-		$coupon_query = $this->db->query("SELECT * FROM `" . DB_PREFIX . "coupon` WHERE code = '" . $this->db->escape($code) . "' AND ((date_start = '0000-00-00' OR date_start < NOW()) AND (date_end = '0000-00-00' OR date_end > NOW())) AND status = '1' AND (customer_group_id = 0 OR customer_group_id = ".(int)$this->customer->getGroupId().")");
+		$coupon_query = $this->db->query("SELECT * FROM `" . DB_PREFIX . "coupon` WHERE code = '" . $this->db->escape($code) . "' AND ((date_start = '0000-00-00' OR date_start < NOW()) AND (date_end = '0000-00-00' OR date_end > NOW())) AND status = '1'");
 		if(!$coupon_query->num_rows) {
 			// check customer coupon
-			$coupon_query = $this->db->query("SELECT * FROM `" . DB_PREFIX . "coupon` c JOIN `".DB_PREFIX."customer_coupon` cc on c.coupon_id = cc.coupon_id WHERE cc.customer_id = '" . $this->db->escape($code) . "' AND ((cc.date_start = '0000-00-00' OR cc.date_start < NOW()) AND (cc.date_end = '0000-00-00' OR cc.date_end > NOW())) AND (c.customer_group_id = 0 OR c.customer_group_id = ".(int)$this->customer->getGroupId().")");
+			$coupon_query = $this->db->query("SELECT c.* FROM `" . DB_PREFIX . "coupon` c JOIN `".DB_PREFIX."customer_coupon` cc on c.coupon_id = cc.coupon_id WHERE cc.customer_id = '" . $this->db->escape($code) . "' AND ((cc.date_start = '0000-00-00' OR cc.date_start < NOW()) AND (cc.date_end = '0000-00-00' OR cc.date_end > NOW()))");
 		}
 		if ($coupon_query->num_rows) {
+			// check if correct customer type
+			if($coupon_query->row['customer_group_id'] && $coupon_query->row['customer_group_id'] != $this->customer->getGroupId()) {
+				$status = false;
+				$message->error = $this->language->get('error_type');
+			}
 			if ($coupon_query->row['total'] > $this->cart->getSubTotal()) {
 				$status = false;
+				$message->error = $this->language->get('error_total');
 			}
 			$this->load->model('extension/total/coupon');
 			$coupon_total = $this->model_extension_total_coupon->getTotalCouponHistoriesByCoupon($code);
 
 			if ($coupon_query->row['uses_total'] > 0 && ($coupon_total >= $coupon_query->row['uses_total'])) {
 				$status = false;
+				$message->error = $this->language->get('error_uses');
 			}
 
 			if ($coupon_query->row['logged'] && !$this->customer->getId()) {
 				$status = false;
+				$message->error = $this->language->get('error_logged');
 			}
 
 			if ($this->customer->getId()) {
@@ -28,6 +38,7 @@ class ModelExtensionModuleCouponAdvanced extends Model {
 				
 				if ($coupon_query->row['uses_customer'] > 0 && ($customer_total >= $coupon_query->row['uses_customer'])) {
 					$status = false;
+					$message->error = $this->language->get('error_customer_uses');
 				}
 			}
 
@@ -114,15 +125,28 @@ class ModelExtensionModuleCouponAdvanced extends Model {
 						$sub_total += $product['total'];
 					}
 				}
+				
+				if($coupon_query->row['shipping'] && count($product_exclude)) {
+					$items = array();
+					$this->load->model('catalog/product');
+					foreach($product_exclude as $exclude) {
+						$items[] = $this->model_catalog_product->getProduct($exclude)['model'];
+					}
+					$message->warning = $this->language->get('error_shipping', implode(', ', $items));
+				}
 
 				if (!$product_data) {
 					$status = false;
+					$message->error = $this->language->get('error_products');
 				}
+				
 				if ($coupon_query->row['total'] > $sub_total && $this->config->get('module_coupon_advanced_total')) {
 					$status = false;
+					$message->error = sprintf($this->language->get('error_total'),$coupon_query->row['total'],$sub_total);
 				}
 			}
 		} else {
+			$message->error = $this->language->get('error_not_found');
 			$status = false;
 		}
 
@@ -278,6 +302,29 @@ class ModelExtensionModuleCouponAdvanced extends Model {
 			$this->cCouponEdit($data);
 		} else {
 			$this->cCouponAdd($data);
+		}
+	}
+	
+	public function customerCoupon($message = null) {
+		if($message === null) $message = new stdClass ();
+		
+		if(isset($this->session->data['coupon']) && $this->session->data['coupon']) {// there already is a coupon - abort
+			$message->notice = $this->language->get('error_coupon_set');
+			return false;
+		}
+		// try to set the customer coupon
+		
+		if(!$this->customer->getId()) {
+			$message->notice = $this->language->get('error_logged');
+			return false;
+		}
+		$coupon = $this->getCoupon($this->customer->getId(), $message);
+		$this->log->write($coupon);
+		
+		if($coupon) {
+			$this->session->data['coupon'] = $this->customer->getId();
+			$message->success = $this->language->get('text_auto');
+			return true;
 		}
 	}
 	
