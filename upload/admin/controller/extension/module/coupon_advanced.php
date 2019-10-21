@@ -63,6 +63,12 @@ class ControllerExtensionModuleCouponAdvanced extends Controller {
 			$data['module_coupon_advanced_status'] = $this->config->get('module_coupon_advanced_status');
 		}
 		
+		if (isset($this->request->post['module_coupon_advanced_voucher'])) {
+			$data['module_coupon_advanced_voucher'] = $this->request->post['module_coupon_advanced_voucher'];
+		} else {
+			$data['module_coupon_advanced_voucher'] = $this->config->get('module_coupon_advanced_voucher');
+		}
+		
 		$this->load->model('customer/customer_group');
 		$data['customer_groups'] = $this->model_customer_customer_group->getCustomerGroups();
 		foreach($data['customer_groups'] as &$customer_group) {
