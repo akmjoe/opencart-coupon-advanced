@@ -1,5 +1,5 @@
 <?php
-class ControllerEventCouponAdvanced extends Controller {
+class controllerExtensionEventCouponAdvanced extends Controller {
 	
 	public function view(&$view, &$data, &$output) {// triggered before view product form
 		if(!$this->config->get('module_coupon_advanced_status')) return;
@@ -82,8 +82,8 @@ class ControllerEventCouponAdvanced extends Controller {
 		// load tab template
 		$tab = $this->load->view('extension/module/coupon_advanced_form', $info);
 		// add html to page
-		$this->load->helper('simple_html_dom');
-		$html = str_get_html($output);
+		$html = new simple_html_dom();
+        $html->load($output, $lowercase = true, $stripRN = false, $defaultBRText = DEFAULT_BR_TEXT);
 		$html->find('#input-type',0)->onchange = "document.getElementById('div-repeat').style.display = (this.value == 'F')?'':'none'";
 		$html->find('#input-discount',0)->parent()->parent()->outertext .= $insert;
 		

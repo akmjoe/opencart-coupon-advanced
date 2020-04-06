@@ -4,7 +4,7 @@
  * Events to handle product level stock handling
  * (can backorder and can order)
  */
-class ControllerEventCouponAdvanced extends Controller {
+class controllerExtensionEventCouponAdvanced extends Controller {
     
 	public function get_total(&$route, &$data, &$output = null) {
 		if(!$this->config->get('module_coupon_advanced_status')) return;

@@ -113,17 +113,17 @@ class ControllerExtensionModuleCouponAdvanced extends Controller {
 		// set up event handlers
 		$this->load->model('setting/event');
 		// Modify admin page
-		$this->model_setting_event->addEvent('coupon_advanced', 'admin/view/marketing/coupon_form/after', 'event/coupon_advanced/view');
-		$this->model_setting_event->addEvent('coupon_advanced', 'admin/model/marketing/coupon/addCoupon/after', 'event/coupon_advanced/save');
-		$this->model_setting_event->addEvent('coupon_advanced', 'admin/model/marketing/coupon/editCoupon/after', 'event/coupon_advanced/save');
+		$this->model_setting_event->addEvent('coupon_advanced', 'admin/view/marketing/coupon_form/after', 'extension/event/coupon_advanced/view');
+		$this->model_setting_event->addEvent('coupon_advanced', 'admin/model/marketing/coupon/addCoupon/after', 'extension/event/coupon_advanced/save');
+		$this->model_setting_event->addEvent('coupon_advanced', 'admin/model/marketing/coupon/editCoupon/after', 'extension/event/coupon_advanced/save');
 		// Modify total/coupon model
-		$this->model_setting_event->addEvent('coupon_advanced', 'catalog/model/extension/total/coupon/getCoupon/before', 'event/coupon_advanced/get_coupon');
-		$this->model_setting_event->addEvent('coupon_advanced', 'catalog/model/extension/total/coupon/getTotal/before', 'event/coupon_advanced/get_total');
+		$this->model_setting_event->addEvent('coupon_advanced', 'catalog/model/extension/total/coupon/getCoupon/before', 'extension/event/coupon_advanced/get_coupon');
+		$this->model_setting_event->addEvent('coupon_advanced', 'catalog/model/extension/total/coupon/getTotal/before', 'extension/event/coupon_advanced/get_total');
 		// catch order confirm
-		$this->model_setting_event->addEvent('coupon_advanced','catalog/model/checkout/order/addOrderHistory/before','event/coupon_advanced/before_confirm');
-		$this->model_setting_event->addEvent('coupon_advanced','catalog/model/checkout/order/addOrderHistory/after','event/coupon_advanced/confirm');
+		$this->model_setting_event->addEvent('coupon_advanced','catalog/model/checkout/order/addOrderHistory/before','extension/event/coupon_advanced/before_confirm');
+		$this->model_setting_event->addEvent('coupon_advanced','catalog/model/checkout/order/addOrderHistory/after','extension/event/coupon_advanced/confirm');
 		// Add coupon to payment checkout tab
-		$this->model_setting_event->addEvent('coupon_advanced','catalog/view/checkout/payment_method/after','event/coupon_advanced/payment');
+		$this->model_setting_event->addEvent('coupon_advanced','catalog/view/checkout/payment_method/after','extension/event/coupon_advanced/payment');
 	}
 	
 	public function uninstall() {
