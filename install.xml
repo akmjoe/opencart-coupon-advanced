@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<modification>
+  <name>Coupon Advanced</name>
+  <code>coupon-advanced</code>
+    <id>Add on for coupons</id>
+    <version>1.0</version>
+    <author>Joe Rothrock</author>
+    <link>https://github.com/akmjoe</link>
+
+    <file path="catalog/model/extension/total/coupon.php">
+        <operation error="skip" info="Disable default coupon methods">
+            <search><![CDATA[public function getCoupon($code) {]]></search>
+            <add position="after"><![CDATA[if($this->config->get('module_coupon_advanced_status')) return;]]></add>
+        </operation>
+        <operation error="skip" info="Disable default coupon methods">
+            <search><![CDATA[public function getTotal($total) {]]></search>
+            <add position="after"><![CDATA[if($this->config->get('module_coupon_advanced_status')) return;]]></add>
+        </operation>
+    </file>
+    <file path="admin/view/template/marketing/coupon_form.twig">
+        <operation error="skip" info="To set product resriction to use model in autocomplete">
+            <search><![CDATA[url: 'index.php?route=catalog/product/autocomplete&user_token={{ user_token }}&filter_name=' +  encodeURIComponent(request),]]></search>
+            <add position="replace"><![CDATA[url: 'index.php?route=catalog/product/autocomplete&user_token={{ user_token }}&filter_model=' +  encodeURIComponent(request),]]></add>
+        </operation>
+    </file>
+    <file path="admin/controller/marketing/coupon.php">
+        <operation error="skip" info="To set product to show model with name">
+            <search><![CDATA['name'       => $product_info['name']]]></search>
+            <add position="replace"><![CDATA['name'       => $product_info['model'].' '.$product_info['name']]]></add>
+        </operation>
+    </file>
+
+</modification>
