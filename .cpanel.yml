@@ -3,4 +3,5 @@ deployment:
     tasks:
         - export DEPLOYPATH=/home/ussander/developer.ussander.com/
         - /bin/cp -R upload/. $DEPLOYPATH
+        - /bin/cp -R upload/catalog/view/theme/default/. "$DEPLOYPATH"catalog/view/theme/ussander/
         - /bin/cp install.xml "$DEPLOYPATH"system/opencart-coupon-advanced.ocmod.xml
