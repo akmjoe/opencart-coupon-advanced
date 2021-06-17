@@ -17,7 +17,7 @@ class controllerExtensionEventCouponAdvanced extends Controller {
 		$this->load->model('extension/module/coupon_advanced');
 		
 		$return = $this->model_extension_module_coupon_advanced->getCoupon($data[0]);
-		$this->log->write($return);
+		//$this->log->write($return);
 		return $return;
 	}
 	
