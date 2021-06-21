@@ -6,16 +6,18 @@ class controllerExtensionEventCouponAdvanced extends Controller {
 		// build insert html
 		$info = $this->language->load('extension/module/coupon_advanced');
 		if(isset($this->request->get['coupon_id']) && $this->request->get['coupon_id']) {
-			$query = $this->db->query("select customer_group_id, repeating from ".DB_PREFIX."coupon where coupon_id = '".(int)$this->request->get['coupon_id']."'");
+			$query = $this->db->query("select customer_group_id, repeating, max_discount from ".DB_PREFIX."coupon where coupon_id = '".(int)$this->request->get['coupon_id']."'");
 			$info = array_merge($query->row, $info);
 		} else {
 			$info['customer_group_id'] = 0;
 			$info['repeating'] = 0;
+			$info['max_discount'] = 0;
 		}
 		if($this->request->server['REQUEST_METHOD'] == 'POST') {
 			// override with post
 			$info['customer_group_id'] = $this->request->post['customer_group_id'];
 			$info['repeating'] = $this->request->post['repeating']?1:0;
+			$info['max_discount'] = $this->request->post['max_discount'];
 		}
 		/** repeating discount **/
 		$insert = '<div class="form-group" id="div-repeat"'.($data['type'] == 'F'?'':'style="display:none"').'><label class="col-sm-2 control-label">';
@@ -25,6 +27,15 @@ class controllerExtensionEventCouponAdvanced extends Controller {
 		$insert .= '	<div class="col-sm-10">';
 		$insert .= '		<input type="checkbox" name="repeating" value="1"';
 		$insert .= ((int)$info['repeating'])?' checked="checked">':'>';
+		$insert .= '	</div>';
+		$insert .= '</div>';
+		/** Max Discount **/
+		$insert .= '<div class="form-group" id="div-max"'.($data['type'] == 'F'?'':'style="display:none"').'><label class="col-sm-2 control-label">';
+		$insert .= '	<span data-toggle="tooltip" title="'.$info['help_max'].'">';
+		$insert .= $info['entry_max'];
+		$insert .= '	</span></label>';
+		$insert .= '	<div class="col-sm-10">';
+		$insert .= '		<input type="text" name="max_discount" value="'.$info['max_discount'].'">';
 		$insert .= '	</div>';
 		$insert .= '</div>';
 		/** restrictions tab **/
@@ -84,7 +95,7 @@ class controllerExtensionEventCouponAdvanced extends Controller {
 		// add html to page
 		$html = new simple_html_dom();
         $html->load($output, $lowercase = true, $stripRN = false, $defaultBRText = DEFAULT_BR_TEXT);
-		$html->find('#input-type',0)->onchange = "document.getElementById('div-repeat').style.display = (this.value == 'F')?'':'none'";
+		$html->find('#input-type',0)->onchange = "document.getElementById('div-repeat').style.display = (this.value == 'F')?'':'none';document.getElementById('div-max').style.display = (this.value == 'F')?'':'none'";
 		$html->find('#input-discount',0)->parent()->parent()->outertext .= $insert;
 		
 		$html->find('#tab-general',0)->outertext .= $tab;
@@ -102,7 +113,7 @@ class controllerExtensionEventCouponAdvanced extends Controller {
 			$coupon_id = $data[0];
 		}
 		// save extra parameters
-		$this->db->query("update ".DB_PREFIX."coupon set customer_group_id = '".(int)$temp['customer_group_id']."', repeating = '".(int)$temp['repeating']."' where coupon_id = '".(int)$coupon_id."'");
+		$this->db->query("update ".DB_PREFIX."coupon set customer_group_id = '".(int)$temp['customer_group_id']."', repeating = '".(int)$temp['repeating']."', max_discount = '".floatval($temp['max_discount'])."' where coupon_id = '".(int)$coupon_id."'");
 		// save product/category excludes
 		$this->db->query("DELETE FROM " . DB_PREFIX . "coupon_product_exclude WHERE coupon_id = '" . (int)$coupon_id . "'");
 		$this->log->write($temp);

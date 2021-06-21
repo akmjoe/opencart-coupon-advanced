@@ -168,6 +168,7 @@ class ModelExtensionModuleCouponAdvanced extends Model {
 				'status'        => $coupon_query->row['status'],
 				'date_added'    => $coupon_query->row['date_added'],
 				'repeating'		=> $coupon_query->row['repeating'],
+				'max_discount'	=> $coupon_query->row['max_discount'],
 			);
 		}
 		return false;
@@ -201,6 +202,9 @@ class ModelExtensionModuleCouponAdvanced extends Model {
 
 				if ($coupon_info['type'] == 'F' && $coupon_info['repeating'] && $coupon_info['total']) {// repeating discount
 					$coupon_info['discount'] = min(floor($sub_total/$coupon_info['total'])*$coupon_info['discount'], $sub_total);
+					if($coupon_info['max_discount']) {
+						$coupon_info['discount'] = min($coupon_info['discount'], $coupon_info['max_discount']);
+					}
 				} elseif ($coupon_info['type'] == 'F') {
 					$coupon_info['discount'] = min($coupon_info['discount'], $sub_total);
 				}
