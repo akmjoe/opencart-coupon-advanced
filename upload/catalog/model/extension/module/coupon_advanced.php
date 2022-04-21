@@ -324,7 +324,7 @@ class ModelExtensionModuleCouponAdvanced extends Model {
 			return false;
 		}
 		$coupon = $this->getCoupon($this->customer->getId(), $message);
-		$this->log->write($coupon);
+		//$this->log->write($coupon);
 		
 		if($coupon) {
 			$this->session->data['coupon'] = $this->customer->getId();
