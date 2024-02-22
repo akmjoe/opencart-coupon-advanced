@@ -3,7 +3,7 @@
 <div class="input-group col-sm-4">
   <input type="text" name="coupon" value="{{ coupon }}" placeholder="{{ entry_coupon }}" id="input-coupon" class="form-control" />
   <span class="input-group-btn">
-  <input type="button" value="{{ button_coupon }}" id="button-coupon" data-loading-text="{{ text_loading }}"  class="btn btn-primary" />
+  <input type="button" value="{{ button_coupon_clear }}" id="button-coupon-clear" data-loading-text="{{ text_loading }}"  class="btn btn-warning" />
   </span>
 </div>
 {% if message_coupon %}
@@ -22,18 +22,54 @@
 {% endif %}
 <hr>
 <script type="text/javascript"><!--
-$('#button-coupon').on('click', function() {
-	$.ajax({
+function coupon_apply() {
+        $.ajax({
 		url: 'index.php?route=extension/module/coupon_advanced/coupon',
 		type: 'post',
 		data: 'coupon=' + encodeURIComponent($('input[name=\'coupon\']').val()),
 		dataType: 'json',
 		beforeSend: function() {
-			$('#button-coupon').button('loading');
+			$('#button-coupon-clear').button('loading');
                         $('#button-payment-method').button('loading');
 		},
 		complete: function() {
-			$('#button-coupon').button('reset');
+			$('#button-coupon-clear').button('reset');
+                        $('#button-payment-method').button('reset');
+		},
+		success: function(json) {
+			$('.alert-dismissible').remove();
+
+			if (json['error']) {
+				$('#collapse-payment-method .panel-body').prepend('<div class="alert alert-danger alert-dismissible"><i class="fa fa-exclamation-circle"></i> ' + json['error'] + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+
+			}
+                        
+                        if (json['message']) {
+				$('#collapse-payment-method .panel-body').prepend('<div class="alert alert-success alert-dismissible"><i class="fa fa-exclamation-circle"></i> ' + json['message'] + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+
+			}
+
+			if (json['redirect']) {
+				location = json['redirect'];
+			}
+		},
+		error: function(xhr, ajaxOptions, thrownError) {
+			alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+		}
+	});
+}
+$('#button-coupon-clear').on('click', function () {
+    $('#input-coupon').val('');
+    $.ajax({
+		url: 'index.php?route=extension/module/coupon_advanced/clear',
+		type: 'post',
+		dataType: 'json',
+		beforeSend: function() {
+			$('#button-coupon-clear').button('loading');
+                        $('#button-payment-method').button('loading');
+		},
+		complete: function() {
+			$('#button-coupon-clear').button('reset');
                         $('#button-payment-method').button('reset');
 		},
 		success: function(json) {
@@ -58,5 +94,6 @@ $('#button-coupon').on('click', function() {
 		}
 	});
 });
+$('#input-coupon').on('change', coupon_apply);
 //--></script>
 
