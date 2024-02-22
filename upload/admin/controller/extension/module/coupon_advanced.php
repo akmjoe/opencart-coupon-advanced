@@ -112,8 +112,8 @@ class ControllerExtensionModuleCouponAdvanced extends Controller {
 	public function install() {
 		// add db fields
 		$this->db->query('ALTER TABLE `'.DB_PREFIX.'coupon` ADD `repeating` tinyint(1) not null default 0');
-		$this->db->query('ALTER TABLE `'.DB_PREFIX.'coupon` ADD `max_discount` decimal(15,4) not null default 0');
 		$this->db->query('ALTER TABLE `'.DB_PREFIX.'coupon` ADD `customer_group_id` int(11) not null default 0');
+		$this->db->query('ALTER TABLE `'.DB_PREFIX.'coupon` ADD `max_discount` decimal(15,4) not null default 0');
 		$this->db->query('CREATE TABLE `'.DB_PREFIX.'coupon_category_exclude` (`coupon_id` int(11) NOT NULL,`category_id` int(11) NOT NULL,PRIMARY KEY (`coupon_id`,`category_id`)) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;');
 		$this->db->query('CREATE TABLE `'.DB_PREFIX.'coupon_product_exclude` (`coupon_product_id` int(11) NOT NULL AUTO_INCREMENT,`coupon_id` int(11) NOT NULL,`product_id` int(11) NOT NULL,PRIMARY KEY (`coupon_product_id`)) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;');
 		$this->db->query('CREATE TABLE `'.DB_PREFIX.'customer_coupon` (`customer_id` int(11) NOT NULL, `coupon_id` int(11) NOT NULL, date_start date NOT NULL, date_end date NOT NULL,PRIMARY KEY (`customer_id`)) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;');
@@ -137,8 +137,8 @@ class ControllerExtensionModuleCouponAdvanced extends Controller {
 		$this->load->model('setting/event');
 		$this->model_setting_event->deleteEventByCode('coupon_advanced');
 		$this->db->query('ALTER TABLE `'.DB_PREFIX.'coupon` drop `repeating`');
-		$this->db->query('ALTER TABLE `'.DB_PREFIX.'coupon` drop `max_discount`');
 		$this->db->query('ALTER TABLE `'.DB_PREFIX.'coupon` drop `customer_group_id`');
+		$this->db->query('ALTER TABLE `'.DB_PREFIX.'coupon` drop `max_discount`');
 		$this->db->query('DROP TABLE `'.DB_PREFIX.'coupon_category_exclude`');
 		$this->db->query('DROP TABLE `'.DB_PREFIX.'coupon_product_exclude`');
 		$this->db->query('DROP TABLE `'.DB_PREFIX.'customer_coupon`');

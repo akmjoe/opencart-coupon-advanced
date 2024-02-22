@@ -49,4 +49,18 @@ class ControllerExtensionModuleCouponAdvanced extends Controller {
 		$this->response->addHeader('Content-Type: application/json');
 		$this->response->setOutput(json_encode($json));
 	}
+	
+	public function clear() {
+		$this->load->language('extension/total/coupon');
+		$this->load->language('extension/module/coupon_advanced');
+
+		$json = array();
+
+		unset($this->session->data['coupon']);
+		
+		$json['message'] = $this->language->get('message_coupon_clear');
+
+		$this->response->addHeader('Content-Type: application/json');
+		$this->response->setOutput(json_encode($json));
+	}
 }

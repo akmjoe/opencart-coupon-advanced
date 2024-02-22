@@ -8,6 +8,8 @@ $_['text_success']  = 'Success: Your coupon discount has been applied!';
 $_['text_auto'] = 'Your Customer Rewards coupon has been automatically applied.';
 // Entry
 $_['entry_coupon']  = 'Enter coupon code';
+$_['button_coupon_clear']  = 'Cancel Coupon';
+$_['message_coupon_clear']  = 'Coupon code has been removed';
 
 // Error
 $_['error_coupon']  = 'Warning: Coupon is either invalid, expired or reached its usage limit!';

@@ -280,7 +280,7 @@ class ModelExtensionModuleCouponAdvanced extends Model {
 					$discount_total = $total['total'];
 				}
 
-				if ($discount_total > 0) {
+				//if ($discount_total > 0) {
 					$total['totals'][] = array(
 						'code'       => 'coupon',
 						'title'      => sprintf($this->language->get('coupon')->get('text_coupon'), $this->session->data['coupon']),
@@ -289,7 +289,7 @@ class ModelExtensionModuleCouponAdvanced extends Model {
 					);
 
 					$total['total'] -= $discount_total;
-				}
+				//}
 			}
 		}
 		return false;
