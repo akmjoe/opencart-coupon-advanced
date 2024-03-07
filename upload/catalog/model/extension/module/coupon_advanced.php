@@ -12,7 +12,8 @@ class ModelExtensionModuleCouponAdvanced extends Model {
 		}
 		if ($coupon_query->num_rows) {
 			// check if correct customer type
-			if($coupon_query->row['customer_group_id'] && $coupon_query->row['customer_group_id'] != $this->customer->getGroupId()) {
+			//if($coupon_query->row['customer_group_id'] && $coupon_query->row['customer_group_id'] != $this->customer->getGroupId()) {
+			if($coupon_query->row['customer_group_id'] && $coupon_query->row['customer_group_id'] != $this->config->get('config_customer_group_id')) {
 				$status = false;
 				$message->error = $this->language->get('error_type');
 			}

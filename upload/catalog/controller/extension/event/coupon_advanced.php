@@ -47,7 +47,16 @@ class controllerExtensionEventCouponAdvanced extends Controller {
         }
 		$data = array_merge($data, $this->load->language('extension/module/coupon_advanced'));
 		if (isset($this->session->data['coupon'])) {
-			$data['coupon'] = $this->session->data['coupon'];
+			// make sure coupon is valid
+			$this->load->model('extension/module/coupon_advanced');
+			$message = new stdClass();
+			$coupon_info = $this->model_extension_module_coupon_advanced->getCoupon($coupon, $message);
+			if(!$coupon_info || $message->error) {
+				$data['message_coupon'] = $message->error;
+				$data['coupon'] = '';
+			} else {
+				$data['coupon'] = $this->session->data['coupon'];
+			}
 		} else {
 			$data['coupon'] = '';
 			// check if a customer coupon, and apply it
