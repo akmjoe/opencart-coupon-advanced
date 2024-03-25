@@ -16,6 +16,7 @@ class ControllerExtensionModuleCouponAdvanced extends Controller {
 
 	public function coupon() {
 		$this->load->language('extension/total/coupon');
+		$this->load->language('extension/module/coupon_advanced');
 
 		$json = array();
 
@@ -43,7 +44,6 @@ class ControllerExtensionModuleCouponAdvanced extends Controller {
 
 		} else {
 			$json['error'] = isset($message->error)?$message->error:$this->language->get('error_coupon');
-			
 		}
 
 		$this->response->addHeader('Content-Type: application/json');
