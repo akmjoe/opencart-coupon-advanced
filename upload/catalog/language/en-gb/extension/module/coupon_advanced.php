@@ -4,7 +4,7 @@ $_['text_checkout_coupon'] = ' &amp; Coupons';
 $_['heading_coupon'] = 'Add A Coupon';
 // Text
 $_['text_coupon']   = 'Coupon (%s)';
-$_['text_success']  = 'Success: Your coupon discount has been applied!';
+$_['text_success']  = 'Success: Coupon code %s has been applied!';
 $_['text_auto'] = 'Your Customer Rewards coupon has been automatically applied.';
 // Entry
 $_['entry_coupon']  = 'Enter coupon code';

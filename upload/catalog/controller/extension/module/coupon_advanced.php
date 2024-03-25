@@ -40,7 +40,7 @@ class ControllerExtensionModuleCouponAdvanced extends Controller {
 			if(isset($message->warning)) $json['error'] = $message->warning;
 			$this->session->data['coupon'] = $this->request->post['coupon'];
 
-			$json['message'] = $this->language->get('text_success');
+			$json['message'] = sprintf($this->language->get('text_success'),$this->session->data['coupon']);
 
 		} else {
 			$json['error'] = isset($message->error)?$message->error:$this->language->get('error_coupon');
