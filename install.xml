@@ -17,6 +17,12 @@
             <add position="after"><![CDATA[if($this->config->get('module_coupon_advanced_status')) return;]]></add>
         </operation>
     </file>
+    <file path="catalog/controller/extension/total/coupon.php">
+        <operation error="skip" info="Add coupon code to success message">
+            <search><![CDATA[$this->session->data['success'] = $this->language->get('text_success');]]></search>
+            <add position="replace"><![CDATA[$this->session->data['success'] = sprintf($this->language->get('text_success'),$this->session->data['coupon']);]]></add>
+        </operation>
+    </file>
     <file path="admin/view/template/marketing/coupon_form.twig">
         <operation error="skip" info="To set product resriction to use model in autocomplete">
             <search><![CDATA[url: 'index.php?route=catalog/product/autocomplete&user_token={{ user_token }}&filter_name=' +  encodeURIComponent(request),]]></search>
