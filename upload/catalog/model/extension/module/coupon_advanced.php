@@ -19,7 +19,7 @@ class ModelExtensionModuleCouponAdvanced extends Model {
 			}
 			if ($coupon_query->row['total'] > $this->cart->getSubTotal()) {
 				$status = false;
-				$message->error = $this->language->get('error_total');
+				$message->error = sprintf($this->language->get('error_total'),$coupon_query->row['total'],$sub_total);
 			}
 			$this->load->model('extension/total/coupon');
 			$coupon_total = $this->model_extension_total_coupon->getTotalCouponHistoriesByCoupon($code);
