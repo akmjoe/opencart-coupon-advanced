@@ -1,3 +1,21 @@
+<div class="form-group coupon-advanced" id="div-repeat" {% if type != 'F' %}style="display:none"{% endif %}>
+    <label class="col-sm-2 control-label"><span data-toggle="tooltip" title="{{ help_repeating }}">{{ entry_repeating }}</span></label>
+    <div class="col-sm-10">
+        {% if repeating %}
+	<input type="checkbox" name="repeating" value="1" checked="checked">
+        {% else %}
+	<input type="checkbox" name="repeating" value="1">
+        {% endif %}
+    </div>
+</div>
+
+<div class="form-group coupon-advanced" id="div-max" {% if type != 'F' %}style="display:none"{% endif %}>
+    <label class="col-sm-2 control-label"><span data-toggle="tooltip" title="{{ help_max }}">{{ entry_max }}</span></label>
+    <div class="col-sm-10">
+        <input type="text" name="max_discount" value="{{ max_discount }}">
+    </div>
+</div>
+<!-- Restriction tab -->
 <div class="tab-pane" id="tab-restriction">
     <div class="form-group">
         <label class="col-sm-2 control-label">
@@ -37,7 +55,7 @@
         </div>
     </div>
 </div>
-        <script type="text/javascript"><!--
+<script type="text/javascript"><!--
 $('input[name=\'product-exclude\']').autocomplete({
 	'source': function(request, response) {
 		$.ajax({
@@ -93,5 +111,20 @@ $('input[name=\'category-exclude\']').autocomplete({
 
 $('#coupon-category-exclude').delegate('.fa-minus-circle', 'click', function() {
 	$(this).parent().remove();
+});
+
+$(document).ready(function (){
+    if($('a[href="#tab-general"]').length) {
+        $('a[href="#tab-general"]').parent('li').after('<li><a href="#tab-restriction" data-toggle="tab">{{ tab_restriction }}</a></li>');
+    }
+    if($('#tab-general').length) {
+        var element = $('#tab-restriction').detach();
+        $('#tab-general').after(element);
+    }
+    $('#input-type').attr('onchange', "document.getElementById('div-repeat').style.display = (this.value == 'F')?'':'none';document.getElementById('div-max').style.display = (this.value == 'F')?'':'none'");
+    if($('#input-discount').length && $('#input-discount').parent('div').parent('div').length) {
+        var element = $('.coupon-advanced').detach();
+        $('#input-discount').parent('div').parent('div').after(element);
+    }
 });
 //--></script> 
